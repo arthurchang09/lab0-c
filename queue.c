@@ -146,7 +146,7 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
     // cppcheck-suppress nullPointer
     element_t *rm = list_entry(head->prev, element_t, list);
     if (sp) {
-        strncpy(sp, rm->value, bufsize - 1);
+        memcpy(sp, rm->value, bufsize);
         sp[bufsize - 1] = '\0';
     }
     rm->list.prev->next = head;
