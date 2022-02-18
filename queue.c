@@ -313,19 +313,6 @@ struct list_head *merge(struct list_head *l1,
     element_t *l1_node = list_entry(l1, element_t, list);
     // cppcheck-suppress nullPointer
     element_t *l2_node = list_entry(l2, element_t, list);
-    /*
-    if (strcmp(l1_node->value,l2_node->value) < 0) {
-        l1->next = merge(l1->next, l2, head);
-        l1->next->prev = l1;
-        l1->prev = head;
-        return l1;
-    }
-    else {
-        l2->next = merge(l2->next, l1, head);
-        l2->next->prev = l2;
-        l2->prev = head;
-        return l2;
-    }*/
     if (strcmp(l1_node->value, l2_node->value) < 0) {
         tmp_head = l1;
         l1->prev = head;
@@ -345,12 +332,10 @@ struct list_head *merge(struct list_head *l1,
             curr->next = l1;
             l1->prev = curr;
             l1 = l1->next;
-            // return l1;
         } else {
             curr->next = l2;
             l2->prev = curr;
             l2 = l2->next;
-            // return l2;
         }
         curr = curr->next;
     }
@@ -385,7 +370,6 @@ struct list_head *merge_sort_list(struct list_head *head,
 
     struct list_head *l1 = merge_sort_list(head, real_head);
     struct list_head *l2 = merge_sort_list(fast, real_head);
-    // struct list_head tmp, *ptr_tmp = &tmp;
     return merge(l1, l2, real_head);
 }
 
