@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "harness.h"
+#include "list_sort.h"
 #include "queue.h"
 
 /* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
@@ -193,7 +195,7 @@ int q_size(struct list_head *head)
 bool q_delete_mid(struct list_head *head)
 {
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
-    if (!head || q_size(head) == 0) {
+    if (!head || head->next == head) {
         return false;
     }
     struct list_head **indir = &head;
@@ -298,6 +300,18 @@ void q_reverse(struct list_head *head)
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
+
+static int list_node_cmp(void *priv,
+                         const struct list_head *a,
+                         const struct list_head *b)
+{
+    // cppcheck-suppress nullPointer
+    return strcmp(list_entry(a, element_t, list)->value,
+                  list_entry(b, element_t, list)->value);
+}
+
+
+
 struct list_head *merge(struct list_head *l1,
                         struct list_head *l2,
                         struct list_head *head)
@@ -378,10 +392,69 @@ void q_sort(struct list_head *head)
     if (!head || !head->next) {
         return;
     }
+
     head->next = merge_sort_list(head->next, head);
     struct list_head *tail = head;
     while (tail->next != head) {
         tail = tail->next;
+    }
+    head->prev = tail;
+}
+
+void q_linux_sort(struct list_head *head)
+{
+    list_sort(NULL, head, list_node_cmp);
+}
+
+/*
+ * Shuffle
+ */
+
+struct list_head *find_node(struct list_head *head, int index, int size_q)
+{
+    struct list_head *target = NULL;
+    target = head;
+    if (index <= ((size_q >> 1) + 1)) {
+        for (int i = 0; i <= index; ++i) {
+            target = target->next;
+        }
+    } else {
+        for (int i = size_q - 1; i >= index; --i) {
+            target = target->prev;
+        }
+    }
+
+    return target;
+}
+
+void q_shuffle(struct list_head *head)
+{
+    int s = q_size(head);
+    if (!head || !head->next || head->next == head ||
+        head->next->next == head) {
+        return;
+    }
+    struct list_head *node1 = head->prev, *tmp = NULL;
+    struct list_head *node2 = NULL;
+    struct list_head *tail = head->prev;
+    for (int i = s - 1; i >= 1; --i) {
+        int j = rand() % (i + 1);
+        if (i == j) {
+            node1 = node1->prev;
+            continue;
+        }
+        head->prev = node1;
+        node2 = find_node(head, j, i + 1);
+
+        tmp = node2->prev;
+        list_del(node2);
+        list_add(node2, node1);
+        list_del(node1);
+        list_add(node1, tmp);
+        node1 = node2->prev;
+        if (i == s - 1) {
+            tail = node2;
+        }
     }
     head->prev = tail;
 }

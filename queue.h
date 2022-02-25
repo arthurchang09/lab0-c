@@ -130,4 +130,14 @@ void q_reverse(struct list_head *head);
  */
 void q_sort(struct list_head *head);
 
+/*
+ * Merge sort in Linux.
+ */
+void q_linux_sort(struct list_head *head);
+
+/*
+ * Shuffle the linked list.
+ */
+void q_shuffle(struct list_head *head);
+
 #endif /* LAB0_QUEUE_H */
