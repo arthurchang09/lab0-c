@@ -5,7 +5,7 @@ CPPCHECK_suppresses="--inline-suppr harness.c --suppress=unmatchedSuppression:ha
 --suppress=nullPointerRedundantCheck:report.c \
 --suppress=nullPointer:qtest.c"
 --suppress=nullPointer:queue.c \
---suppress=unmatchedSuppression:queue.c"
+--suppress=unmatchedSuppression:queue.c \
 CPPCHECK_OPTS="-I. --enable=all --error-exitcode=1 --force $CPPCHECK_suppresses ."
 
 RETURN=0
